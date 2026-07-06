@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Fluency Self-Assessment — Priceline</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f4f5f7;
+    color: #1a1a2e;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #003580;
+    color: white;
+    padding: 28px 32px;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  header p {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-top: 4px;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 32px auto;
+    padding: 0 20px 60px;
+  }
+
+  .intro-card {
+    background: white;
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    border-left: 4px solid #003580;
+  }
+
+  .intro-card p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #444;
+  }
+
+  .intro-card p + p {
+    margin-top: 10px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #003580;
+    margin: 32px 0 12px;
+  }
+
+  .card {
+    background: white;
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  }
+
+  .card label.field-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #1a1a2e;
+  }
+
+  .card input[type="text"],
+  .card select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #1a1a2e;
+    background: #fafafa;
+    transition: border-color 0.2s;
+  }
+
+  .card input[type="text"]:focus,
+  .card select:focus {
+    outline: none;
+    border-color: #003580;
+    background: white;
+  }
+
+  .d-card {
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    overflow: hidden;
+  }
+
+  .d-header {
+    background: #003580;
+    color: white;
+    padding: 16px 24px;
+  }
+
+  .d-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .d-header p {
+    font-size: 13px;
+    opacity: 0.75;
+    margin-top: 3px;
+  }
+
+  .d-body {
+    padding: 8px 0;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 24px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .option:last-child { border-bottom: none; }
+
+  .option:hover { background: #f7f9ff; }
+
+  .option input[type="radio"] {
+    margin-top: 2px;
+    flex-shrink: 0;
+    accent-color: #003580;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+
+  .option-content { flex: 1; }
+
+  .level-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #e8eef8;
+    color: #003580;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+  }
+
+  .option-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+  }
+
+  .option input[type="radio"]:checked ~ .option-content .option-text {
+    color: #003580;
+    font-weight: 500;
+  }
+
+  .submit-area {
+    text-align: center;
+    margin-top: 32px;
+  }
+
+  .submit-btn {
+    background: #003580;
+    color: white;
+    border: none;
+    padding: 15px 48px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .submit-btn:hover { background: #002a6a; transform: translateY(-1px); }
+  .submit-btn:active { transform: translateY(0); }
+
+  .error-msg {
+    color: #c0392b;
+    font-size: 13px;
+    margin-top: 12px;
+  }
+
+  #results {
+    display: none;
+  }
+
+  .results-card {
+    background: white;
+    border-radius: 10px;
+    padding: 32px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  }
+
+  .results-card h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #003580;
+    margin-bottom: 6px;
+  }
+
+  .results-card .subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 28px;
+  }
+
+  .profile-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 14px;
+  }
+
+  .profile-label {
+    width: 110px;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a2e;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 28px;
+    background: #eef1f8;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #003580, #0057d8);
+    border-radius: 6px;
+    transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+  }
+
+  .bar-fill span {
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .bar-fill.low { background: linear-gradient(90deg, #6b7db3, #8fa3d4); }
+  .bar-fill.mid { background: linear-gradient(90deg, #003580, #0057d8); }
+  .bar-fill.high { background: linear-gradient(90deg, #003580, #00b4d8); }
+
+  .level-name {
+    width: 80px;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: #666;
+    text-align: right;
+  }
+
+  .overall-score {
+    text-align: center;
+    margin: 24px 0 8px;
+    padding: 20px;
+    background: #f0f4ff;
+    border-radius: 8px;
+  }
+
+  .overall-score .score-num {
+    font-size: 44px;
+    font-weight: 800;
+    color: #003580;
+    line-height: 1;
+  }
+
+  .overall-score .score-label {
+    font-size: 13px;
+    color: #666;
+    margin-top: 4px;
+  }
+
+  .overall-score .score-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #003580;
+    margin-top: 6px;
+  }
+
+  .next-steps-card {
+    background: white;
+    border-radius: 10px;
+    padding: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  }
+
+  .next-steps-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #003580;
+    margin-bottom: 16px;
+  }
+
+  .focus-area {
+    background: #f7f9ff;
+    border-left: 3px solid #003580;
+    border-radius: 0 6px 6px 0;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+
+  .focus-area h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #003580;
+    margin-bottom: 4px;
+  }
+
+  .focus-area p {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  .submit-to-priceline {
+    background: #003580;
+    border-radius: 10px;
+    padding: 28px;
+    margin-top: 20px;
+    color: white;
+  }
+
+  .submit-to-priceline h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .submit-to-priceline p {
+    font-size: 14px;
+    opacity: 0.85;
+    line-height: 1.5;
+    margin-bottom: 18px;
+  }
+
+  .score-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .score-chip {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+  }
+
+  .form-btn {
+    display: inline-block;
+    background: white;
+    color: #003580;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 13px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .form-btn:hover {
+    background: #e8f0ff;
+    transform: translateY(-1px);
+  }
+
+  .form-note {
+    font-size: 12px;
+    opacity: 0.65;
+    margin-top: 12px;
+  }
+
+  .retake-btn {
+    display: block;
+    margin: 28px auto 0;
+    background: transparent;
+    color: #003580;
+    border: 2px solid #003580;
+    padding: 12px 36px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .retake-btn:hover {
+    background: #003580;
+    color: white;
+  }
+
+  .print-btn {
+    display: block;
+    margin: 12px auto 0;
+    background: transparent;
+    color: #666;
+    border: 1px solid #ccc;
+    padding: 10px 36px;
+    font-size: 13px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .print-btn:hover { border-color: #003580; color: #003580; }
+
+  @media print {
+    header { background: #003580 !important; -webkit-print-color-adjust: exact; }
+    .submit-area, .retake-btn, .print-btn, .submit-to-priceline { display: none; }
+    #assessment { display: none; }
+    #results { display: block !important; }
+    .bar-fill { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AI Fluency Self-Assessment</h1>
+  <p>Priceline &middot; Q3 2025 Baseline</p>
+</header>
+
+<div class="container">
+
+  <div id="assessment">
+
+    <div class="intro-card">
+      <p>For each of the 5 D's, select the statement that most accurately describes where you are <strong>today</strong> — not where you want to be or where you think you should be. Honest answers give you the most useful results.</p>
+      <p>Takes about 5 minutes. Your profile appears immediately when you finish.</p>
+    </div>
+
+    <div class="section-label">About you</div>
+
+    <div class="card">
+      <label class="field-label" for="name">Your name <span style="color:#c0392b">*</span></label>
+      <input type="text" id="name" placeholder="First and last name">
+    </div>
+
+    <div class="card">
+      <label class="field-label" for="dept">Department / team <span style="color:#c0392b">*</span></label>
+      <input type="text" id="dept" placeholder="e.g. Product, Engineering, Marketing">
+    </div>
+
+    <div class="card">
+      <label class="field-label" for="role">Which best describes your role? <span style="color:#c0392b">*</span></label>
+      <select id="role">
+        <option value="">-- Select --</option>
+        <option>Individual contributor -- non-technical</option>
+        <option>Individual contributor -- technical / engineering</option>
+        <option>Manager or team lead</option>
+        <option>Director or above</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="section-label">The 5 D's of AI Fluency</div>
+
+    <div class="d-card">
+      <div class="d-header">
+        <h3>Delegation</h3>
+        <p>Deciding what to give to AI and what to keep human</p>
+      </div>
+      <div class="d-body">
+        <label class="option"><input type="radio" name="delegation" value="1"><div class="option-content"><div class="level-badge">Level 1 &middot; Novice</div><div class="option-text">I haven't thought much about which tasks to give AI. I use it when someone suggests it or when I happen to think of it.</div></div></label>
+        <label class="option"><input type="radio" name="delegation" value="2"><div class="option-content"><div class="level-badge">Level 2 &middot; Developing</div><div class="option-text">I can name a few tasks I'm comfortable delegating to AI. I usually check with others before trying something new.</div></div></label>
+        <label class="option"><input type="radio" name="delegation" value="3"><div class="option-content"><div class="level-badge">Level 3 &middot; Proficient</div><div class="option-text">I routinely assess my work and confidently decide what to fully delegate, what to do with AI's help, and what to keep entirely human.</div></div></label>
+        <label class="option"><input type="radio" name="delegation" value="4"><div class="option-content"><div class="level-badge">Level 4 &middot; Advanced</div><div class="option-text">I help my team think through how to split work between people and AI, and I can spot where AI use creates risk or over-reliance.</div></div></label>
+        <label class="option"><input type="radio" name="delegation" value="5"><div class="option-content"><div class="level-badge">Level 5 &middot; Expert</div><div class="option-text">I shape how our organization decides when and how to use AI at scale. I develop the standards and principles others follow.</div></div></label>
+      </div>
+    </div>
+
+    <div class="d-card">
+      <div class="d-header">
+        <h3>Description</h3>
+        <p>Communicating clearly to get useful AI output</p>
+      </div>
+      <div class="d-body">
+        <label class="option"><input type="radio" name="description" value="1"><div class="option-content"><div class="level-badge">Level 1 &middot; Novice</div><div class="option-text">I write simple, short requests and usually use whatever the AI gives back first.</div></div></label>
+        <label class="option"><input type="radio" name="description" value="2"><div class="option-content"><div class="level-badge">Level 2 &middot; Developing</div><div class="option-text">I add context and specify the format I want. I try a few different approaches when the first attempt doesn't work.</div></div></label>
+        <label class="option"><input type="radio" name="description" value="3"><div class="option-content"><div class="level-badge">Level 3 &middot; Proficient</div><div class="option-text">I write structured prompts with context, examples, and constraints. I ask AI to think through steps for complex tasks.</div></div></label>
+        <label class="option"><input type="radio" name="description" value="4"><div class="option-content"><div class="level-badge">Level 4 &middot; Advanced</div><div class="option-text">I create prompt templates my team can reuse and coach others on how to communicate effectively with AI.</div></div></label>
+        <label class="option"><input type="radio" name="description" value="5"><div class="option-content"><div class="level-badge">Level 5 &middot; Expert</div><div class="option-text">I set standards for how our organization writes AI instructions and research emerging prompting practices.</div></div></label>
+      </div>
+    </div>
+
+    <div class="d-card">
+      <div class="d-header">
+        <h3>Discernment</h3>
+        <p>Evaluating AI output critically before using it</p>
+      </div>
+      <div class="d-body">
+        <label class="option"><input type="radio" name="discernment" value="1"><div class="option-content"><div class="level-badge">Level 1 &middot; Novice</div><div class="option-text">I generally use AI output without checking it carefully. I'm not yet practiced at spotting confident-sounding errors.</div></div></label>
+        <label class="option"><input type="radio" name="discernment" value="2"><div class="option-content"><div class="level-badge">Level 2 &middot; Developing</div><div class="option-text">I fact-check specific claims and notice obvious errors, but I may miss subtle inaccuracies or biases.</div></div></label>
+        <label class="option"><input type="radio" name="discernment" value="3"><div class="option-content"><div class="level-badge">Level 3 &middot; Proficient</div><div class="option-text">Before generating output I define what good looks like. I compare responses and can spot bias, gaps, and overconfident reasoning.</div></div></label>
+        <label class="option"><input type="radio" name="discernment" value="4"><div class="option-content"><div class="level-badge">Level 4 &middot; Advanced</div><div class="option-text">I build evaluation checklists my team can use and understand where specific AI models tend to fail and why.</div></div></label>
+        <label class="option"><input type="radio" name="discernment" value="5"><div class="option-content"><div class="level-badge">Level 5 &middot; Expert</div><div class="option-text">I create formal quality standards for AI outputs and connect evaluation practices to our organization's risk management.</div></div></label>
+      </div>
+    </div>
+
+    <div class="d-card">
+      <div class="d-header">
+        <h3>Diligence</h3>
+        <p>Using AI responsibly and taking accountability</p>
+      </div>
+      <div class="d-body">
+        <label class="option"><input type="radio" name="diligence" value="1"><div class="option-content"><div class="level-badge">Level 1 &middot; Novice</div><div class="option-text">I use AI tools without thinking much about transparency, what data I'm sharing, or who's accountable for the output.</div></div></label>
+        <label class="option"><input type="radio" name="diligence" value="2"><div class="option-content"><div class="level-badge">Level 2 &middot; Developing</div><div class="option-text">I understand I'm accountable for AI-assisted work. I disclose AI contributions and avoid putting sensitive data in unsanctioned tools.</div></div></label>
+        <label class="option"><input type="radio" name="diligence" value="3"><div class="option-content"><div class="level-badge">Level 3 &middot; Proficient</div><div class="option-text">I consistently follow AI policies, document AI contributions, and consider bias and fairness before sharing AI-assisted work.</div></div></label>
+        <label class="option"><input type="radio" name="diligence" value="4"><div class="option-content"><div class="level-badge">Level 4 &middot; Advanced</div><div class="option-text">I coach my team on responsible AI use and actively raise concerns when AI use creates ethical or reputational risk.</div></div></label>
+        <label class="option"><input type="radio" name="diligence" value="5"><div class="option-content"><div class="level-badge">Level 5 &middot; Expert</div><div class="option-text">I help shape AI ethics and governance policies for our organization and build a culture of responsible AI use.</div></div></label>
+      </div>
+    </div>
+
+    <div class="d-card">
+      <div class="d-header">
+        <h3>Develop</h3>
+        <p>Building and managing automated AI workflows</p>
+      </div>
+      <div class="d-body">
+        <label class="option"><input type="radio" name="develop" value="1"><div class="option-content"><div class="level-badge">Level 1 &middot; Novice</div><div class="option-text">I know AI can automate multi-step processes but haven't set one up myself.</div></div></label>
+        <label class="option"><input type="radio" name="develop" value="2"><div class="option-content"><div class="level-badge">Level 2 &middot; Developing</div><div class="option-text">I've used pre-built AI automation tools and understand how they work at a basic level.</div></div></label>
+        <label class="option"><input type="radio" name="develop" value="3"><div class="option-content"><div class="level-badge">Level 3 &middot; Proficient</div><div class="option-text">I design and run my own multi-step automated workflows and connect AI to the tools and data I use.</div></div></label>
+        <label class="option"><input type="radio" name="develop" value="4"><div class="option-content"><div class="level-badge">Level 4 &middot; Advanced</div><div class="option-text">I design automated systems for my team and manage complex workflows with multiple AI agents and human handoff points.</div></div></label>
+        <label class="option"><input type="radio" name="develop" value="5"><div class="option-content"><div class="level-badge">Level 5 &middot; Expert</div><div class="option-text">I set the strategy for how our organization adopts automated AI workflows and define standards for safe, scalable automation.</div></div></label>
+      </div>
+    </div>
+
+    <div class="submit-area">
+      <button class="submit-btn" onclick="submitAssessment()">See My AI Fluency Profile &rarr;</button>
+      <div class="error-msg" id="error-msg"></div>
+    </div>
+
+  </div>
+
+  <div id="results">
+
+    <div class="results-card">
+      <h2 id="results-name">Your AI Fluency Profile</h2>
+      <div class="subtitle" id="results-subtitle"></div>
+      <div class="overall-score">
+        <div class="score-num" id="overall-num">--</div>
+        <div class="score-label">overall score out of 5</div>
+        <div class="score-name" id="overall-name">--</div>
+      </div>
+      <div style="margin-top: 28px;">
+        <div class="profile-row" id="bar-delegation"></div>
+        <div class="profile-row" id="bar-description"></div>
+        <div class="profile-row" id="bar-discernment"></div>
+        <div class="profile-row" id="bar-diligence"></div>
+        <div class="profile-row" id="bar-develop"></div>
+      </div>
+    </div>
+
+    <div class="next-steps-card">
+      <h3>Recommended focus areas for Q3</h3>
+      <div id="next-steps-content"></div>
+    </div>
+
+    <div class="submit-to-priceline" id="submit-to-priceline">
+      <h3>One more step -- log your results</h3>
+      <p>Submit your scores to Priceline so we can track progress across the org and design learning sessions around where people actually are.</p>
+      <div class="score-summary" id="score-summary"></div>
+      <a id="form-link" href="#" target="_blank" class="form-btn">Submit my results to Priceline &rarr;</a>
+      <div class="form-note">Opens the Google Form in a new tab. Your scores are shown above so you can enter them in seconds.</div>
+    </div>
+
+    <button class="retake-btn" onclick="retake()">&larr; Start over</button>
+    <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+
+  </div>
+
+</div>
+
+<script>
+  var GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeF2W00WHoyauPxHEuEx2HrrgCS1NgMED42uDL1JJ3tz_GrSA/viewform';
+  var DIMENSIONS = ['delegation','description','discernment','diligence','develop'];
+  var LABELS = {delegation:'Delegation',description:'Description',discernment:'Discernment',diligence:'Diligence',develop:'Develop'};
+  var LEVEL_NAMES = ['','Novice','Developing','Proficient','Advanced','Expert'];
+
+  var NEXT_STEPS = {
+    delegation: {
+      1: 'Start by listing 5 tasks you do this week. Ask: which of these involve judgment only I can provide? Which are mostly assembly or formatting? Try delegating one of the latter to an AI tool.',
+      2: 'Push yourself to try AI in one new area this quarter -- ideally a task that feels a little uncomfortable to hand off. That edge is where your fluency grows.',
+      3: 'You have a strong foundation. Focus on helping teammates build the same instincts -- share how you decide what to delegate in team meetings or Slack.',
+      4: 'Consider documenting your team\'s delegation principles so others can apply them consistently without needing to ask you each time.',
+      5: 'At this level, your leverage is in codifying what you know. Work on formal standards or playbooks that scale your thinking across the org.'
+    },
+    description: {
+      1: 'Pick one recurring task and try adding just two things to your next AI request: the audience and the format you want. Notice if the output improves.',
+      2: 'Learn one structured prompting technique -- like giving the AI a role ("You are a..."), an example of good output, or explicit constraints. Practice it for two weeks.',
+      3: 'Start building a personal prompt library for your most common use cases. Save what works so you\'re not starting from scratch each time.',
+      4: 'Run a short "prompting workshop" with your team -- even 30 minutes sharing examples of prompts that worked and ones that didn\'t creates fast collective learning.',
+      5: 'Consider publishing prompt standards internally. A short guide with 5-10 annotated examples will have outsized impact on org-wide output quality.'
+    },
+    discernment: {
+      1: 'Before using any AI output on something important, give yourself one rule: identify one specific claim or number and verify it independently. Build the habit before expanding it.',
+      2: 'Before generating AI output for high-stakes work, write down in one sentence what "good" looks like. Use that as your evaluation filter.',
+      3: 'Go deeper on failure modes: read about how large language models hallucinate and why they\'re overconfident. Understanding the mechanism makes you a sharper evaluator.',
+      4: 'Build a simple evaluation checklist (3-5 questions) for your team to run on AI-assisted work before it ships. Even lightweight checklists catch the most common errors.',
+      5: 'Connect your quality standards to the org\'s existing risk and compliance frameworks. AI output quality is an emerging governance surface -- you can help shape it.'
+    },
+    diligence: {
+      1: 'Start with one rule: before using any AI tool for work, check whether it\'s on Priceline\'s approved list. Don\'t put customer data, confidential strategy, or PII into any unapproved tool.',
+      2: 'Make disclosure a habit: any time AI contributed meaningfully to a deliverable, note it. This protects you and sets a good norm for your team.',
+      3: 'You\'re doing the right things. Deepen your practice by thinking proactively about bias: before sharing AI output, ask whether the model might have a skewed perspective on the topic.',
+      4: 'Formalize what you know -- write down the 3-4 principles you coach your team on. Having it in writing makes it easier to share and scales your influence.',
+      5: 'You\'re operating at a governance level. Use AI Week as an opportunity to surface Priceline\'s AI ethics principles publicly and invite dialogue -- gaps in policy often surface when employees feel safe raising them.'
+    },
+    develop: {
+      1: 'You don\'t need to build anything to start here. Explore one pre-built AI automation this quarter -- something like a Claude project with a workflow, a Zapier integration, or an AI scheduling assistant.',
+      2: 'Try building one simple multi-step workflow yourself. Most no-code tools (Zapier, Make, n8n) have templates. Pick a workflow you run manually every week and automate one step of it.',
+      3: 'You have the foundation to go further. Try connecting an AI workflow to a live data source -- a spreadsheet, a form, or an API -- and see where the complexity emerges.',
+      4: 'Focus on resilience: when does a workflow break, and how do you design for graceful failure? This is the difference between a demo and something that runs reliably at scale.',
+      5: 'Define what "safe scalable automation" means at Priceline. What guardrails, review checkpoints, and rollback mechanisms should every agentic workflow include? That framework doesn\'t exist yet -- you could write it.'
+    }
+  };
+
+  function submitAssessment() {
+    var name = document.getElementById('name').value.trim();
+    var dept = document.getElementById('dept').value.trim();
+    var role = document.getElementById('role').value;
+    var errorEl = document.getElementById('error-msg');
+
+    if (!name || !dept || !role) {
+      errorEl.textContent = 'Please fill in your name, department, and role before continuing.';
+      return;
+    }
+
+    var scores = {};
+    for (var i = 0; i < DIMENSIONS.length; i++) {
+      var d = DIMENSIONS[i];
+      var sel = document.querySelector('input[name="' + d + '"]:checked');
+      if (!sel) {
+        errorEl.textContent = 'Please select a level for ' + LABELS[d] + ' before continuing.';
+        document.querySelector('input[name="' + d + '"]').closest('.d-card').scrollIntoView({behavior:'smooth', block:'center'});
+        return;
+      }
+      scores[d] = parseInt(sel.value);
+    }
+
+    errorEl.textContent = '';
+    renderResults(name, dept, scores);
+  }
+
+  function renderResults(name, dept, scores) {
+    document.getElementById('assessment').style.display = 'none';
+    var resultsEl = document.getElementById('results');
+    resultsEl.style.display = 'block';
+
+    document.getElementById('results-name').textContent = name + "'s AI Fluency Profile";
+    document.getElementById('results-subtitle').textContent = dept + ' · Q3 2025 Baseline';
+
+    var total = 0;
+    for (var i = 0; i < DIMENSIONS.length; i++) total += scores[DIMENSIONS[i]];
+    var avg = total / DIMENSIONS.length;
+    var avgRounded = Math.round(avg * 10) / 10;
+    var overallLevel = Math.round(avg);
+
+    document.getElementById('overall-num').textContent = avgRounded.toFixed(1);
+    document.getElementById('overall-name').textContent = LEVEL_NAMES[overallLevel];
+
+    for (var i = 0; i < DIMENSIONS.length; i++) {
+      var d = DIMENSIONS[i];
+      var score = scores[d];
+      var pct = (score / 5) * 100;
+      var barClass = score <= 2 ? 'low' : score === 3 ? 'mid' : 'high';
+      var rowEl = document.getElementById('bar-' + d);
+      rowEl.innerHTML = '<div class="profile-label">' + LABELS[d] + '</div>' +
+        '<div class="bar-track"><div class="bar-fill ' + barClass + '" style="width:0%" data-pct="' + pct + '"><span>' + LEVEL_NAMES[score] + '</span></div></div>' +
+        '<div class="level-name">' + score + '/5</div>';
+    }
+
+    setTimeout(function() {
+      var bars = document.querySelectorAll('.bar-fill');
+      for (var i = 0; i < bars.length; i++) {
+        bars[i].style.width = bars[i].getAttribute('data-pct') + '%';
+      }
+    }, 50);
+
+    var sorted = DIMENSIONS.slice().sort(function(a,b){ return scores[a] - scores[b]; });
+    var showCount = (scores[sorted[0]] === scores[sorted[1]]) ? 2 : (scores[sorted[0]] < 3 ? 2 : 1);
+    var showAreas = sorted.slice(0, Math.min(showCount, 2));
+
+    var nsHTML = '';
+    for (var i = 0; i < showAreas.length; i++) {
+      var d = showAreas[i];
+      nsHTML += '<div class="focus-area"><h4>' + LABELS[d] + ' -- Level ' + scores[d] + ': ' + LEVEL_NAMES[scores[d]] + '</h4><p>' + NEXT_STEPS[d][scores[d]] + '</p></div>';
+    }
+    document.getElementById('next-steps-content').innerHTML = nsHTML;
+
+    var chipsHTML = '';
+    for (var i = 0; i < DIMENSIONS.length; i++) {
+      var d = DIMENSIONS[i];
+      chipsHTML += '<div class="score-chip">' + LABELS[d] + ': ' + scores[d] + '/5 · ' + LEVEL_NAMES[scores[d]] + '</div>';
+    }
+    document.getElementById('score-summary').innerHTML = chipsHTML;
+    document.getElementById('form-link').href = GOOGLE_FORM_URL;
+
+    resultsEl.scrollIntoView({behavior:'smooth'});
+  }
+
+  function retake() {
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('assessment').style.display = 'block';
+    var radios = document.querySelectorAll('input[type="radio"]');
+    for (var i = 0; i < radios.length; i++) radios[i].checked = false;
+    document.getElementById('name').value = '';
+    document.getElementById('dept').value = '';
+    document.getElementById('role').value = '';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+</script>
+
+</body>
+</html>
