@@ -454,7 +454,7 @@
 
 <header>
   <h1>AI Fluency Self-Assessment</h1>
-  <p>Priceline &middot; Q3 2025 Baseline</p>
+  <p>Priceline &middot; Q3 2026 Baseline</p>
 </header>
 
 <div class="container">
@@ -594,11 +594,10 @@
     </div>
 
     <div class="submit-to-priceline" id="submit-to-priceline">
-      <h3>One more step -- log your results</h3>
-      <p>Submit your scores to Priceline so we can track progress across the org and design learning sessions around where people actually are.</p>
+      <h3>Logging your results</h3>
+      <p>Your scores are being submitted to Priceline automatically so we can track progress across the org.</p>
       <div class="score-summary" id="score-summary"></div>
-      <a id="form-link" href="#" target="_blank" class="form-btn">Submit my results to Priceline &rarr;</a>
-      <div class="form-note">Opens the Google Form in a new tab. Your scores are shown above so you can enter them in seconds.</div>
+      <div class="form-note" id="submit-status">Submitting...</div>
     </div>
 
     <button class="retake-btn" onclick="retake()">&larr; Start over</button>
@@ -609,7 +608,7 @@
 </div>
 
 <script>
-  var GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeF2W00WHoyauPxHEuEx2HrrgCS1NgMED42uDL1JJ3tz_GrSA/viewform';
+  var APPS_SCRIPT_URL = 'https://script.google.com/a/macros/priceline.com/s/AKfycbxjvuJmUfKZxoNw6MrNKfN75ZnzJX5peYmsvNgpmQXG8r63E1y22rX1-Ib9818Z7TYW/exec';
   var DIMENSIONS = ['delegation','description','discernment','diligence','develop'];
   var LABELS = {delegation:'Delegation',description:'Description',discernment:'Discernment',diligence:'Diligence',develop:'Develop'};
   var LEVEL_NAMES = ['','Novice','Developing','Proficient','Advanced','Expert'];
@@ -685,7 +684,7 @@
     resultsEl.style.display = 'block';
 
     document.getElementById('results-name').textContent = name + "'s AI Fluency Profile";
-    document.getElementById('results-subtitle').textContent = dept + ' · Q3 2025 Baseline';
+    document.getElementById('results-subtitle').textContent = dept + ' · Q3 2026 Baseline';
 
     var total = 0;
     for (var i = 0; i < DIMENSIONS.length; i++) total += scores[DIMENSIONS[i]];
@@ -731,7 +730,28 @@
       chipsHTML += '<div class="score-chip">' + LABELS[d] + ': ' + scores[d] + '/5 · ' + LEVEL_NAMES[scores[d]] + '</div>';
     }
     document.getElementById('score-summary').innerHTML = chipsHTML;
-    document.getElementById('form-link').href = GOOGLE_FORM_URL;
+    // Auto-submit to Google Sheets
+    var payload = {
+      timestamp: new Date().toISOString(),
+      name: name,
+      department: dept,
+      delegation: scores.delegation,
+      description: scores.description,
+      discernment: scores.discernment,
+      diligence: scores.diligence,
+      develop: scores.develop,
+      overall: avgRounded
+    };
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function() {
+      document.getElementById('submit-status').textContent = '\u2713 Results logged successfully.';
+    }).catch(function() {
+      document.getElementById('submit-status').textContent = 'Could not auto-submit. Please screenshot your results.';
+    });
 
     resultsEl.scrollIntoView({behavior:'smooth'});
   }
