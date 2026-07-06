@@ -346,67 +346,6 @@
     line-height: 1.5;
   }
 
-  .submit-to-priceline {
-    background: #003580;
-    border-radius: 10px;
-    padding: 28px;
-    margin-top: 20px;
-    color: white;
-  }
-
-  .submit-to-priceline h3 {
-    font-size: 17px;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-
-  .submit-to-priceline p {
-    font-size: 14px;
-    opacity: 0.85;
-    line-height: 1.5;
-    margin-bottom: 18px;
-  }
-
-  .score-summary {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-
-  .score-chip {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    color: white;
-  }
-
-  .form-btn {
-    display: inline-block;
-    background: white;
-    color: #003580;
-    font-weight: 700;
-    font-size: 15px;
-    padding: 13px 28px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: background 0.2s, transform 0.1s;
-  }
-
-  .form-btn:hover {
-    background: #e8f0ff;
-    transform: translateY(-1px);
-  }
-
-  .form-note {
-    font-size: 12px;
-    opacity: 0.65;
-    margin-top: 12px;
-  }
-
   .retake-btn {
     display: block;
     margin: 28px auto 0;
@@ -427,8 +366,6 @@
   }
 
   .print-btn {
-    display: block;
-    margin: 12px auto 0;
     background: transparent;
     color: #666;
     border: 1px solid #ccc;
@@ -443,7 +380,7 @@
 
   @media print {
     header { background: #003580 !important; -webkit-print-color-adjust: exact; }
-    .submit-area, .retake-btn, .print-btn, .submit-to-priceline { display: none; }
+    .submit-area, .retake-btn, .print-btn { display: none; }
     #assessment { display: none; }
     #results { display: block !important; }
     .bar-fill { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -476,11 +413,6 @@
     <div class="card">
       <label class="field-label" for="dept">Department / team <span style="color:#c0392b">*</span></label>
       <input type="text" id="dept" placeholder="e.g. Product, Engineering, Marketing">
-    </div>
-
-    <div class="card">
-      <label class="field-label" for="email">Priceline email <span style="color:#c0392b">*</span></label>
-      <input type="text" id="email" placeholder="yourname@priceline.com">
     </div>
 
     <div class="card">
@@ -575,6 +507,9 @@
   </div>
 
   <div id="results">
+    <div style="text-align:right;margin-bottom:12px;">
+      <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+    </div>
 
     <div class="results-card">
       <h2 id="results-name">Your AI Fluency Profile</h2>
@@ -598,9 +533,6 @@
       <div id="next-steps-content"></div>
     </div>
 
-
-
-    <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
     <button class="retake-btn" onclick="retake()">&larr; Start over</button>
 
   </div>
@@ -653,16 +585,11 @@
   function submitAssessment() {
     var name = document.getElementById('name').value.trim();
     var dept = document.getElementById('dept').value.trim();
-    var email = document.getElementById('email').value.trim();
     var role = document.getElementById('role').value;
     var errorEl = document.getElementById('error-msg');
 
-    if (!name || !dept || !email || !role) {
-      errorEl.textContent = 'Please fill in all fields before continuing.';
-      return;
-    }
-    if (!email.endsWith('@priceline.com')) {
-      errorEl.textContent = 'Please enter your @priceline.com email address.';
+    if (!name || !dept || !role) {
+      errorEl.textContent = 'Please fill in your name, department, and role before continuing.';
       return;
     }
 
@@ -679,10 +606,10 @@
     }
 
     errorEl.textContent = '';
-    renderResults(name, dept, email, scores);
+    renderResults(name, dept, scores);
   }
 
-  function renderResults(name, dept, email, scores) {
+  function renderResults(name, dept, scores) {
     document.getElementById('assessment').style.display = 'none';
     var resultsEl = document.getElementById('results');
     resultsEl.style.display = 'block';
@@ -728,13 +655,6 @@
     }
     document.getElementById('next-steps-content').innerHTML = nsHTML;
 
-    var chipsHTML = '';
-    for (var i = 0; i < DIMENSIONS.length; i++) {
-      var d = DIMENSIONS[i];
-      chipsHTML += '<div class="score-chip">' + LABELS[d] + ': ' + scores[d] + '/5 · ' + LEVEL_NAMES[scores[d]] + '</div>';
-    }
-    document.getElementById('score-summary').innerHTML = chipsHTML;
-
     resultsEl.scrollIntoView({behavior:'smooth'});
   }
 
@@ -745,7 +665,6 @@
     for (var i = 0; i < radios.length; i++) radios[i].checked = false;
     document.getElementById('name').value = '';
     document.getElementById('dept').value = '';
-    document.getElementById('email').value = '';
     document.getElementById('role').value = '';
     window.scrollTo({top:0, behavior:'smooth'});
   }
