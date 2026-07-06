@@ -598,22 +598,16 @@
       <div id="next-steps-content"></div>
     </div>
 
-    <div class="submit-to-priceline" id="submit-to-priceline">
-      <h3>Logging your results</h3>
-      <p>Your scores are being submitted to Priceline automatically so we can track progress across the org.</p>
-      <div class="score-summary" id="score-summary"></div>
-      <div class="form-note" id="submit-status">Submitting...</div>
-    </div>
 
-    <button class="retake-btn" onclick="retake()">&larr; Start over</button>
+
     <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+    <button class="retake-btn" onclick="retake()">&larr; Start over</button>
 
   </div>
 
 </div>
 
 <script>
-  var APPS_SCRIPT_URL = 'https://script.google.com/a/macros/priceline.com/s/AKfycbxkkeUZ-WMuTFdKu6bD7q6nozhDQPCVmSCJhTwi7Q-GPuQsB9EJSPzTySSuEIM8qYt5/exec';
   var DIMENSIONS = ['delegation','description','discernment','diligence','develop'];
   var LABELS = {delegation:'Delegation',description:'Description',discernment:'Discernment',diligence:'Diligence',develop:'Develop'};
   var LEVEL_NAMES = ['','Novice','Developing','Proficient','Advanced','Expert'];
@@ -740,29 +734,6 @@
       chipsHTML += '<div class="score-chip">' + LABELS[d] + ': ' + scores[d] + '/5 · ' + LEVEL_NAMES[scores[d]] + '</div>';
     }
     document.getElementById('score-summary').innerHTML = chipsHTML;
-    // Auto-submit to Google Sheets
-    var payload = {
-      timestamp: new Date().toISOString(),
-      name: name,
-      email: email,
-      department: dept,
-      delegation: scores.delegation,
-      description: scores.description,
-      discernment: scores.discernment,
-      diligence: scores.diligence,
-      develop: scores.develop,
-      overall: avgRounded
-    };
-    fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    }).then(function() {
-      document.getElementById('submit-status').textContent = '\u2713 Results logged successfully.';
-    }).catch(function() {
-      document.getElementById('submit-status').textContent = 'Could not auto-submit. Please screenshot your results.';
-    });
 
     resultsEl.scrollIntoView({behavior:'smooth'});
   }
