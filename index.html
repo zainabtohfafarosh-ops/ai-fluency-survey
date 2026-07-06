@@ -479,6 +479,11 @@
     </div>
 
     <div class="card">
+      <label class="field-label" for="email">Priceline email <span style="color:#c0392b">*</span></label>
+      <input type="text" id="email" placeholder="yourname@priceline.com">
+    </div>
+
+    <div class="card">
       <label class="field-label" for="role">Which best describes your role? <span style="color:#c0392b">*</span></label>
       <select id="role">
         <option value="">-- Select --</option>
@@ -608,7 +613,7 @@
 </div>
 
 <script>
-  var APPS_SCRIPT_URL = 'https://script.google.com/a/macros/priceline.com/s/AKfycbxjvuJmUfKZxoNw6MrNKfN75ZnzJX5peYmsvNgpmQXG8r63E1y22rX1-Ib9818Z7TYW/exec';
+  var APPS_SCRIPT_URL = 'https://script.google.com/a/macros/priceline.com/s/AKfycbxkkeUZ-WMuTFdKu6bD7q6nozhDQPCVmSCJhTwi7Q-GPuQsB9EJSPzTySSuEIM8qYt5/exec';
   var DIMENSIONS = ['delegation','description','discernment','diligence','develop'];
   var LABELS = {delegation:'Delegation',description:'Description',discernment:'Discernment',diligence:'Diligence',develop:'Develop'};
   var LEVEL_NAMES = ['','Novice','Developing','Proficient','Advanced','Expert'];
@@ -654,11 +659,16 @@
   function submitAssessment() {
     var name = document.getElementById('name').value.trim();
     var dept = document.getElementById('dept').value.trim();
+    var email = document.getElementById('email').value.trim();
     var role = document.getElementById('role').value;
     var errorEl = document.getElementById('error-msg');
 
-    if (!name || !dept || !role) {
-      errorEl.textContent = 'Please fill in your name, department, and role before continuing.';
+    if (!name || !dept || !email || !role) {
+      errorEl.textContent = 'Please fill in all fields before continuing.';
+      return;
+    }
+    if (!email.endsWith('@priceline.com')) {
+      errorEl.textContent = 'Please enter your @priceline.com email address.';
       return;
     }
 
@@ -675,10 +685,10 @@
     }
 
     errorEl.textContent = '';
-    renderResults(name, dept, scores);
+    renderResults(name, dept, email, scores);
   }
 
-  function renderResults(name, dept, scores) {
+  function renderResults(name, dept, email, scores) {
     document.getElementById('assessment').style.display = 'none';
     var resultsEl = document.getElementById('results');
     resultsEl.style.display = 'block';
@@ -734,6 +744,7 @@
     var payload = {
       timestamp: new Date().toISOString(),
       name: name,
+      email: email,
       department: dept,
       delegation: scores.delegation,
       description: scores.description,
@@ -763,6 +774,7 @@
     for (var i = 0; i < radios.length; i++) radios[i].checked = false;
     document.getElementById('name').value = '';
     document.getElementById('dept').value = '';
+    document.getElementById('email').value = '';
     document.getElementById('role').value = '';
     window.scrollTo({top:0, behavior:'smooth'});
   }
