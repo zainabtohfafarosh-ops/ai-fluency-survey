@@ -415,18 +415,6 @@
       <input type="text" id="dept" placeholder="e.g. Product, Engineering, Marketing">
     </div>
 
-    <div class="card">
-      <label class="field-label" for="role">Which best describes your role? <span style="color:#c0392b">*</span></label>
-      <select id="role">
-        <option value="">-- Select --</option>
-        <option>Individual contributor -- non-technical</option>
-        <option>Individual contributor -- technical / engineering</option>
-        <option>Manager or team lead</option>
-        <option>Director or above</option>
-        <option>Other</option>
-      </select>
-    </div>
-
     <div class="section-label">The 5 D's of AI Fluency</div>
 
     <div class="d-card">
@@ -585,11 +573,10 @@
   function submitAssessment() {
     var name = document.getElementById('name').value.trim();
     var dept = document.getElementById('dept').value.trim();
-    var role = document.getElementById('role').value;
     var errorEl = document.getElementById('error-msg');
 
-    if (!name || !dept || !role) {
-      errorEl.textContent = 'Please fill in your name, department, and role before continuing.';
+    if (!name || !dept) {
+      errorEl.textContent = 'Please fill in your name and department before continuing.';
       return;
     }
 
